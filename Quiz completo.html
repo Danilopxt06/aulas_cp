@@ -1,219 +1,156 @@
 <!DOCTYPE html>
 <html lang="pt-BR">
 <head>
-    <title>Quiz – Versão 3</title>
-    <style>
-        * { box-sizing: border-box; margin: 0; padding: 0; }
-        body {
-            font-family: Arial, sans-serif;
-            background: linear-gradient(135deg, #f97316, #facc15);
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            min-height: 100vh;
-        }
-        .caixa {
-            width: 100%;
-            max-width: 530px;
-            background: #fefce8;
-            padding: 24px 28px;
-            border-radius: 14px;
-            box-shadow: 0 6px 16px rgba(0,0,0,0.18);
-        }
-        h1 {
-            text-align: center;
-            margin-bottom: 8px;
-            color: #451a03;
-        }
-        .sub {
-            text-align: center;
-            margin-bottom: 20px;
-            font-size: 14px;
-            color: #78350f;
-        }
-        #progresso {
-            text-align: right;
-            font-size: 13px;
-            color: #92400e;
-            margin-bottom: 8px;
-        }
-        #tela-inicio p {
-            margin-bottom: 12px;
-        }
-        .tela { display: none; }
-        .tela.ativa { display: block; }
-        .pergunta {
-            margin-bottom: 14px;
-            font-weight: bold;
-            color: #451a03;
-        }
-        label {
-            display: block;
-            margin-bottom: 6px;
-            cursor: pointer;
-            color: #713f12;
-        }
-        button {
-            margin-top: 12px;
-            padding: 8px 18px;
-            border-radius: 10px;
-            border: none;
-            cursor: pointer;
-            font-size: 14px;
-        }
-        .btn-principal {
-            background: #f97316;
-            color: #fefce8;
-        }
-        .btn-principal:hover {
-            opacity: 0.9;
-        }
-        .btn-secundario {
-            background: #22c55e;
-            color: #052e16;
-        }
-        #resultado {
-            font-size: 17px;
-            font-weight: bold;
-            text-align: center;
-            margin-top: 10px;
-            color: #422006;
-        }
-        #aviso {
-            font-size: 13px;
-            color: #b91c1c;
-            margin-top: 4px;
-        }
-    </style>
+<meta charset="UTF-8">
+<title>Quiz</title>
+
+<style>
+body{
+    font-family:Arial;
+    background:#008188;
+    display:flex;
+    justify-content:center;
+    align-items:center;
+    height:100vh;
+    margin:0;
+}
+.caixa{
+    background:#ecfeff;
+    padding:20px;
+    text-align:center;
+}
+.tela{display:none}
+.ativa{display:block}
+button{
+    padding:8px 14px;
+    border:0;
+    border-radius:6px;
+    background:#0ea5e9;
+    color:#fff;
+    cursor:pointer;
+}
+#aviso{color:red;font-size:13px}
+label{display:block;margin:4px 0}
+</style>
 </head>
+
 <body>
 <div class="caixa">
-    <h1>Quiz Front-end</h1>
-    <p class="sub">Clique em começar, responda e veja sua pontuação ao final.</p>
 
-    <div id="tela-inicio" class="tela ativa">
-        <p>
-            São 5 perguntas de múltipla escolha  
-            sobre desenvolvimento web básico.
-        </p>
-        <button class="btn-principal" onclick="iniciarQuiz()">Começar</button>
-    </div>
+<h2>Qual personagem você seria?</h2>
 
-    <div id="tela-quiz" class="tela">
-        <p id="progresso"></p>
-        <p id="texto-pergunta" class="pergunta"></p>
+<div id="inicio" class="tela ativa">
+    <p>Responda 4 perguntas</p>
+    <button onclick="iniciar()">Começar</button>
+</div>
 
-        <div id="opcoes">
-            <label><input type="radio" name="opcao" value="0" id="op0"><span id="texto-op0"></span></label>
-            <label><input type="radio" name="opcao" value="1" id="op1"><span id="texto-op1"></span></label>
-            <label><input type="radio" name="opcao" value="2" id="op2"><span id="texto-op2"></span></label>
-            <label><input type="radio" name="opcao" value="3" id="op3"><span id="texto-op3"></span></label>
-        </div>
+<div id="quiz" class="tela">
+    <p id="pergunta"></p>
 
-        <p id="aviso"></p>
-        <button class="btn-principal" onclick="proximaPergunta()">Próxima</button>
-    </div>
+    <label><input type="radio" name="op" value="0"> <span id="o0"></span></label>
+    <label><input type="radio" name="op" value="1"> <span id="o1"></span></label>
+    <label><input type="radio" name="op" value="2"> <span id="o2"></span></label>
+    <label><input type="radio" name="op" value="3"> <span id="o3"></span></label>
 
-    <div id="tela-final" class="tela">
-        <p class="pergunta">Resultado:</p>
-        <p id="resultado"></p>
-        <button class="btn-secundario" onclick="reiniciar()">Tentar novamente</button>
-    </div>
+    <p id="aviso"></p>
+    <button onclick="prox()">Próxima</button>
+</div>
+
+<div id="fim" class="tela">
+    <img id="imgRes" width="150"><br><br>
+    <p id="res"></p>
+    <button onclick="location.reload()">Refazer</button>
+</div>
+
 </div>
 
 <script>
-    const perguntas = [
-        {
-            texto: "1) Qual desses navegadores NÃO é um exemplo de browser?",
-            opcoes: ["Chrome", "Firefox", "VS Code", "Edge"],
-            correta: 2
-        },
-        {
-            texto: "2) Qual tag HTML é usada para o título principal da página?",
-            opcoes: ["<p>", "<h1>", "<title>", "<main>"],
-            correta: 1
-        },
-        {
-            texto: "3) Qual propriedade CSS muda a cor de fundo?",
-            opcoes: ["color", "background-color", "font-style", "border"],
-            correta: 1
-        },
-        {
-            texto: "4) Qual destas extensões é de um arquivo JavaScript?",
-            opcoes: [".js", ".css", ".html", ".json"],
-            correta: 0
-        },
-        {
-            texto: "5) Em JavaScript, como mostramos algo no console?",
-            opcoes: ["console.show()", "log.console()", "console.log()", "print()"],
-            correta: 2
-        }
-    ];
+const perguntas=[
+[
+"1 - Em um trabalho em grupo, você costuma ser quem?",
+"Assume a liderança e resolve as partes difíceis",
+"Mantém o grupo organizado e focado",
+"Ajuda todos e não desiste",
+"Resolve de um jeito diferente do padrão"
+],
+[
+"2 - Qual é sua maior qualidade?",
+"Alto desempenho",
+"Confiabilidade",
+"Persistência",
+"Versatilidade"
+],
+[
+"3 - Quando surge um desafio, você:",
+"Age rápido e entrega resultados",
+"Analisa antes de agir",
+"Insiste até conseguir",
+"Usa criatividade para resolver"
+],
+[
+"4 - Como as pessoas te enxergam?",
+"Diferenciado",
+"Essencial no dia a dia",
+"Determinado",
+"Único"
+]
+];
 
-    let indice = 0;
-    let pontos = 0;
+const resultados=[
+{
+    texto:"👟 Nike – Desempenho e destaque",
+    img:"nike.png"
+},
+{
+    texto:"💻 Windows – Base e confiabilidade",
+    img:"windows.png"
+},
+{
+    texto:"🔥 Tanjiro – Persistência e empatia",
+    img:"tanjiro.png"
+},
+{
+    texto:"⚔️ Satoru Gojou – Poder e versatilidade",
+    img:"gojou.png"
+}
+];
 
-    function mostrarPergunta() {
-        const perguntaAtual = perguntas[indice];
+let i=0;
+let pontos=[0,0,0,0];
 
-        document.getElementById('texto-pergunta').textContent = perguntaAtual.texto;
-        document.getElementById('texto-op0').textContent = " " + perguntaAtual.opcoes[0];
-        document.getElementById('texto-op1').textContent = " " + perguntaAtual.opcoes[1];
-        document.getElementById('texto-op2').textContent = " " + perguntaAtual.opcoes[2];
-        document.getElementById('texto-op3').textContent = " " + perguntaAtual.opcoes[3];
+function iniciar(){
+    inicio.classList.remove("ativa");
+    quiz.classList.add("ativa");
+    mostrar();
+}
 
-        document.getElementById('progresso').textContent =
-            "Pergunta " + (indice + 1) + " de " + perguntas.length;
+function mostrar(){
+    pergunta.innerText=perguntas[i][0];
+    o0.innerText=perguntas[i][1];
+    o1.innerText=perguntas[i][2];
+    o2.innerText=perguntas[i][3];
+    o3.innerText=perguntas[i][4];
+    document.querySelectorAll("input").forEach(x=>x.checked=false);
+    aviso.innerText="";
+}
 
-        const radios = document.querySelectorAll('input[name="opcao"]');
-        radios.forEach(function (r) {
-            r.checked = false;
-        });
-
-        document.getElementById('aviso').textContent = "";
+function prox(){
+    const sel=document.querySelector("input:checked");
+    if(!sel){
+        aviso.innerText="Escolha uma opção";
+        return;
     }
+    pontos[sel.value]++;
+    i++;
+    i<perguntas.length ? mostrar() : fimQuiz();
+}
 
-    function iniciarQuiz() {
-        document.getElementById('tela-inicio').classList.remove('ativa');
-        document.getElementById('tela-quiz').classList.add('ativa');
-        indice = 0;
-        pontos = 0;
-        mostrarPergunta();
-    }
-
-    function proximaPergunta() {
-        const selecionada = document.querySelector('input[name="opcao"]:checked');
-
-        if (!selecionada) {
-            document.getElementById('aviso').textContent = "Escolha uma opção antes de continuar.";
-            return;
-        }
-
-        const resposta = Number(selecionada.value);
-        if (resposta === perguntas[indice].correta) {
-            pontos++;
-        }
-
-        indice++;
-
-        if (indice < perguntas.length) {
-            mostrarPergunta();
-        } else {
-            mostrarResultado();
-        }
-    }
-
-    function mostrarResultado() {
-        document.getElementById('tela-quiz').classList.remove('ativa');
-        document.getElementById('tela-final').classList.add('ativa');
-
-        document.getElementById('resultado').textContent =
-            "Você acertou " + pontos + " de " + perguntas.length + " perguntas.";
-    }
-
-    function reiniciar() {
-        location.reload();
-    }
+function fimQuiz(){
+    quiz.classList.remove("ativa");
+    fim.classList.add("ativa");
+    res.innerText=resultados[pontos.indexOf(Math.max(...pontos))];
+}
 </script>
+
 </body>
 </html>
